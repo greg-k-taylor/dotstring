@@ -58,3 +58,4 @@ def value_convert(d, fn, include_keys=[], exclude_keys=[]):
     for path, value in traverse_keys(d, include_keys, exclude_keys):
         new_value = fn(value)
         set_key_value(d, path, new_value)
+    return d

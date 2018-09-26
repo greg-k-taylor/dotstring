@@ -1,5 +1,7 @@
 import unittest
 from utils import key_value, set_key_value
+from utils import value_convert
+from utils import to_int
 
 
 class TestDrugbankUtils(unittest.TestCase):
@@ -34,3 +36,22 @@ class TestDrugbankUtils(unittest.TestCase):
         res = set_key_value(d, "drugbank.pharmacology.xref.wikipedia", "www.myurl.com")
         print(res)
         self.assertEqual(res['drugbank']['pharmacology']['xref']['wikipedia'], "www.myurl.com")
+
+    def test_value_convert(self):
+        d = {
+            'drugbank': {'id': '123'},
+            'pharmgkb': {'id': '456'},
+            'chebi': {'id': '789'}
+            }
+        res = value_convert(d, to_int,
+                            include_keys=[
+                                "drugbank.id",
+                                "pharmgkb.id",
+                                "chebi.id"
+                                ])
+        r = key_value(d, "drugbank.id")
+        self.assertEquals(r, 123)
+        r = key_value(d, "pharmgkb.id")
+        self.assertEquals(r, 456)
+        r = key_value(d, "chebi.id")
+        self.assertEquals(r, 789)
