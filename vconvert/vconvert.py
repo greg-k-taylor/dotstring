@@ -1,22 +1,6 @@
+from vconvert.type import to_float
+from vconvert.type import to_int
 
-
-def to_int(val):
-    """convert an input string to int."""
-    if isinstance(val, str):
-        try:
-            return int(val)
-        except ValueError:
-            pass
-    return val
-
-def to_float(val):
-    """convert an input string to float."""
-    if isinstance(val, str):
-        try:
-            return float(val)
-        except ValueError:
-            pass
-    return val
 
 def last_element(d, key_list):
     k = key_list.pop(0)
@@ -59,3 +43,9 @@ def value_convert(d, fn, include_keys=[], exclude_keys=[]):
         new_value = fn(value)
         set_key_value(d, path, new_value)
     return d
+
+def int_convert(d, include_keys=[], exclude_keys=[]):
+    value_convert(d, to_int, include_keys, exclude_keys)
+
+def float_convert(d, include_keys=[], exclude_keys=[]):
+    value_convert(d, to_float, include_keys, exclude_keys)

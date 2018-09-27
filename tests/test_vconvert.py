@@ -1,7 +1,6 @@
 import unittest
 from vconvert import value_convert
-from vconvert import to_int
-from vconvert import to_float
+from vconvert import int_convert
 # private methods
 from vconvert.vconvert import key_value, set_key_value
 
@@ -36,7 +35,6 @@ class TestDrugbankUtils(unittest.TestCase):
             }
 
         res = set_key_value(d, "drugbank.pharmacology.xref.wikipedia", "www.myurl.com")
-        print(res)
         self.assertEqual(res['drugbank']['pharmacology']['xref']['wikipedia'], "www.myurl.com")
 
     def test_value_convert(self):
@@ -45,8 +43,8 @@ class TestDrugbankUtils(unittest.TestCase):
             'pharmgkb': {'id': '456'},
             'chebi': {'id': '789'}
             }
-        res = value_convert(d, to_int,
-                            include_keys=[
+        res = int_convert(d,
+                          include_keys=[
                                 "drugbank.id",
                                 "pharmgkb.id",
                                 "chebi.id"
