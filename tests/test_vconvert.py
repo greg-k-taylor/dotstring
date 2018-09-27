@@ -2,7 +2,9 @@ import unittest
 from vconvert import value_convert
 from vconvert import int_convert
 # private methods
-from vconvert.vconvert import key_value, set_key_value
+from vconvert.vconvert import key_value
+from vconvert.vconvert import set_key_value
+from vconvert.vconvert import last_element
 
 
 class TestDrugbankUtils(unittest.TestCase):
@@ -19,8 +21,10 @@ class TestDrugbankUtils(unittest.TestCase):
                 }
             }
         res = key_value(d, "drugbank.pharmacology.xref.wikipedia")
-        print(res)
         self.assertEqual(res, "www.wiki.com")
+
+        res = key_value(d, "drugbank.udef_field.xref")
+        self.assertEqual(res, None)
         
     def test_set_key_value(self):
         d = {
@@ -36,6 +40,21 @@ class TestDrugbankUtils(unittest.TestCase):
 
         res = set_key_value(d, "drugbank.pharmacology.xref.wikipedia", "www.myurl.com")
         self.assertEqual(res['drugbank']['pharmacology']['xref']['wikipedia'], "www.myurl.com")
+
+    def test_last_element(self):
+        d = {
+            'drugbank': {
+                'measurement': [
+                    {'pH': '6'},
+                    {'pH': '7.5'},
+                    {'pH': '8'},
+                    ]
+                }
+            }
+        key_list = ["drugbank", "measurement", "pH"]
+        for k in last_element(d, key_list):
+            print(k)
+        raise ValueError
 
     def test_value_convert(self):
         d = {

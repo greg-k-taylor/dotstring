@@ -6,8 +6,13 @@ def last_element(d, key_list):
     k = key_list.pop(0)
     if not len(key_list):
         return k, d
+    if not d:
+        return k, d
     else:
-        t = d[k]
+        try:
+            t = d[k]
+        except KeyError:
+            return k, None
         if isinstance(t, dict):                
             return last_element(d[k], key_list)
         elif isinstance(t, list):
@@ -20,12 +25,20 @@ def last_element(d, key_list):
 def key_value(dictionary, key):
     key_list = key.split('.')
     k, le = last_element(dictionary, key_list)
-    return le[k]
+    if le:
+        try:
+            return le[k]
+        except KeyError:
+            pass
     
 def set_key_value(dictionary, key, value):
     key_list = key.split('.')
     k, le = last_element(dictionary, key_list)
-    le[k] = value
+    if le:
+        try:
+            le[k] = value
+        except KeyError:
+            pass
     return dictionary
 
 def traverse_keys(d, include_keys=[], exclude_keys=[]):
@@ -45,7 +58,7 @@ def value_convert(d, fn, include_keys=[], exclude_keys=[]):
     return d
 
 def int_convert(d, include_keys=[], exclude_keys=[]):
-    value_convert(d, to_int, include_keys, exclude_keys)
+    return value_convert(d, to_int, include_keys, exclude_keys)
 
 def float_convert(d, include_keys=[], exclude_keys=[]):
-    value_convert(d, to_float, include_keys, exclude_keys)
+    return value_convert(d, to_float, include_keys, exclude_keys)
