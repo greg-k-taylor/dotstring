@@ -1,7 +1,9 @@
 import unittest
-from utils import key_value, set_key_value
-from utils import value_convert
-from utils import to_int
+from vconvert import value_convert
+from vconvert import to_int
+from vconvert import to_float
+# private methods
+from vconvert.vconvert import key_value, set_key_value
 
 
 class TestDrugbankUtils(unittest.TestCase):
