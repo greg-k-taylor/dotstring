@@ -21,10 +21,10 @@ class TestDrugbankUtils(unittest.TestCase):
                 }
             }
         res = key_value(d, "drugbank.pharmacology.xref.wikipedia")
-        self.assertEqual(res, "www.wiki.com")
+        self.assertEqual(list(res), ["www.wiki.com"])
 
         res = key_value(d, "drugbank.udef_field.xref")
-        self.assertEqual(res, None)
+        self.assertEqual(list(res), [None])
         
     def test_set_key_value(self):
         d = {
@@ -52,9 +52,11 @@ class TestDrugbankUtils(unittest.TestCase):
                 }
             }
         key_list = ["drugbank", "measurement", "pH"]
-        for k in last_element(d, key_list):
-            print(k)
-        raise ValueError
+        res = []
+        for k, le in last_element(d, key_list):
+            res.append(le[k])
+        print(res)
+        self.assertEqual(res, ['6', '7.5', '8'])
 
     def test_value_convert(self):
         d = {
@@ -69,8 +71,8 @@ class TestDrugbankUtils(unittest.TestCase):
                                 "chebi.id"
                                 ])
         r = key_value(d, "drugbank.id")
-        self.assertEquals(r, 123)
+        self.assertEquals(list(r), [123])
         r = key_value(d, "pharmgkb.id")
-        self.assertEquals(r, 456)
+        self.assertEquals(list(r), [456])
         r = key_value(d, "chebi.id")
-        self.assertEquals(r, 789)
+        self.assertEquals(list(r), [789])

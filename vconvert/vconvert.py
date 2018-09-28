@@ -4,41 +4,48 @@ from vconvert.type import to_int
 
 def last_element(d, key_list):
     k = key_list.pop(0)
-    if not len(key_list):
-        return k, d
+    if not key_list:
+        yield k, d
     if not d:
-        return k, d
+        yield k, d
     else:
         try:
             t = d[k]
-        except KeyError:
-            return k, None
+        except:
+            yield k, None
+            return
         if isinstance(t, dict):                
-            return last_element(d[k], key_list)
+            yield from last_element(d[k], key_list)
         elif isinstance(t, list):
             for l in t:
-                return last_element(l, key_list)
+                yield from last_element(l, key_list.copy())
         elif isinstance(t, tuple):
             # unsupported type
             raise ValueError("unsupported type in key {}".format(k))
 
-def key_value(dictionary, key):
-    key_list = key.split('.')
-    k, le = last_element(dictionary, key_list)
-    if le:
+def safe_ref(k, d):
+    if d:
         try:
-            return le[k]
+            return d[k]
         except KeyError:
             pass
     
-def set_key_value(dictionary, key, value):
+def key_value(dictionary, key):
     key_list = key.split('.')
-    k, le = last_element(dictionary, key_list)
-    if le:
-        try:
-            le[k] = value
-        except KeyError:
-            pass
+    for k, le in last_element(dictionary, key_list):
+        yield safe_ref(k, le)
+
+def set_key_value(dictionary, key, value):
+    def safe_assign(k, d):
+        if d:
+            try:
+                d[k] = value
+            except KeyError:
+                pass
+
+    key_list = key.split('.')
+    for k, le in last_element(dictionary, key_list):
+        safe_assign(k, le)
     return dictionary
 
 def traverse_keys(d, include_keys=[], exclude_keys=[]):
@@ -49,7 +56,8 @@ def traverse_keys(d, include_keys=[], exclude_keys=[]):
     """
     if include_keys:
         for k in include_keys:
-            yield k, key_value(d, k)
+            for val in key_value(d, k):
+                yield k, val
 
 def value_convert(d, fn, include_keys=[], exclude_keys=[]):
     for path, value in traverse_keys(d, include_keys, exclude_keys):
