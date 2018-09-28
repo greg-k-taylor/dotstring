@@ -24,15 +24,15 @@ def last_element(d, key_list):
         elif isinstance(t, tuple):
             # unsupported type
             raise ValueError("unsupported type in key {}".format(k))
-
-def safe_ref(k, d):
-    if d:
-        try:
-            return d[k]
-        except KeyError:
-            pass
     
 def key_value(dictionary, key):
+    def safe_ref(k, d):
+        if d:
+            try:
+                return d[k]
+            except KeyError:
+                pass
+
     key_list = key.split('.')
     for k, le in last_element(dictionary, key_list):
         yield safe_ref(k, le)
