@@ -24,7 +24,7 @@ class TestDrugbankUtils(unittest.TestCase):
         self.assertEqual(list(res), ["www.wiki.com"])
 
         res = key_value(d, "drugbank.udef_field.xref")
-        self.assertEqual(list(res), [None])
+        self.assertEqual(list(res), [])
         
     def test_set_key_value(self):
         d = {

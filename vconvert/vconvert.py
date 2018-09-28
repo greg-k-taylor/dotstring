@@ -3,16 +3,18 @@ from vconvert.type import to_int
 
 
 def last_element(d, key_list):
+    # preconditions
+    if not d or not key_list:
+        return
     k = key_list.pop(0)
+    # termination
     if not key_list:
         yield k, d
-    if not d:
-        yield k, d
+    # recursion
     else:
         try:
             t = d[k]
         except:
-            yield k, None
             return
         if isinstance(t, dict):                
             yield from last_element(d[k], key_list)
