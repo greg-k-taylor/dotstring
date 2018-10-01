@@ -67,7 +67,7 @@ def traverse_keys(d, include_keys=[], exclude_keys=[]):
         if isinstance(d, dict):
             for k in d.keys():
                 yield from traverse_helper(d[k], keys + [k])
-        if isinstance(d, list):
+        elif isinstance(d, list):
             for i in d:
                 yield from traverse_helper(i, keys)
         else:
@@ -81,7 +81,6 @@ def traverse_keys(d, include_keys=[], exclude_keys=[]):
         for kl, val in traverse_helper(d, []):
             key = '.'.join(kl)
             if key not in exclude_keys:
-                print(key, val)
                 yield key, val
 
 def value_convert(d, fn, include_keys=[], exclude_keys=[]):

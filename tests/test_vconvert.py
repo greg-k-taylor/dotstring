@@ -120,7 +120,10 @@ class TestDrugbankUtils(unittest.TestCase):
                     }
                 }
             }
-        for k in traverse_keys(d, [], []):
-            print(k)
+        res = []
+        for k, elem in traverse_keys(d, [], []):
+            res.append(k)
 
-        raise ValueError
+        self.assertEquals(res,
+                          ["drugbank.pharmacology.actions",
+                           "drugbank.pharmacology.xref.wikipedia"])
