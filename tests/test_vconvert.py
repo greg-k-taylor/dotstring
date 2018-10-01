@@ -5,11 +5,20 @@ from vconvert import int_convert
 from vconvert.vconvert import key_value
 from vconvert.vconvert import set_key_value
 from vconvert.vconvert import last_element
+from vconvert.vconvert import traverse_keys
 
 
 class TestDrugbankUtils(unittest.TestCase):
 
     def test_key_value(self):
+
+        # test small document
+        d = {
+            'field': 'value'
+            }
+        res = key_value(d, 'field')
+        self.assertEqual(list(res), ['value'])
+
         d = {
             'drugbank': {
                 'pharmacology': {
@@ -27,6 +36,15 @@ class TestDrugbankUtils(unittest.TestCase):
         self.assertEqual(list(res), [])
         
     def test_set_key_value(self):
+
+        # test small document
+        d = {
+            'field': 'value'
+            }
+        res = set_key_value(d, 'field', 'new-value')
+        self.assertEqual(res['field'], 'new-value')
+
+        # test nested document
         d = {
             'drugbank': {
                 'pharmacology': {
@@ -38,8 +56,17 @@ class TestDrugbankUtils(unittest.TestCase):
                 }
             }
 
+        # test where field is present
         res = set_key_value(d, "drugbank.pharmacology.xref.wikipedia", "www.myurl.com")
         self.assertEqual(res['drugbank']['pharmacology']['xref']['wikipedia'], "www.myurl.com")
+
+        # test where field is not present
+        res = set_key_value(d, "drugbank.pharmacology.xref-invalid.wikipedia", "www.wiki.com")
+        self.assertEqual(res['drugbank']['pharmacology']['xref']['wikipedia'], "www.myurl.com")
+
+        # test invalid input cases
+        with self.assertRaises(TypeError):
+            res = set_key_value(d, None, "www.myurl.com")
 
     def test_last_element(self):
         d = {
@@ -55,14 +82,14 @@ class TestDrugbankUtils(unittest.TestCase):
         res = []
         for k, le in last_element(d, key_list):
             res.append(le[k])
-        print(res)
         self.assertEqual(res, ['6', '7.5', '8'])
 
     def test_value_convert(self):
         d = {
             'drugbank': {'id': '123'},
             'pharmgkb': {'id': '456'},
-            'chebi': {'id': '789'}
+            'chebi': {'id': '789'},
+            'other': {'id': '9'}
             }
         res = int_convert(d,
                           include_keys=[
@@ -76,3 +103,24 @@ class TestDrugbankUtils(unittest.TestCase):
         self.assertEquals(list(r), [456])
         r = key_value(d, "chebi.id")
         self.assertEquals(list(r), [789])
+
+        # not-converted
+        r = key_value(d, "other.id")
+        self.assertEquals(list(r), ['9'])
+
+    def test_traverse_keys(self):
+        # test nested document
+        d = {
+            'drugbank': {
+                'pharmacology': {
+                    'actions': '123',
+                    'xref': {
+                        'wikipedia': 'www.wiki.com'
+                        }
+                    }
+                }
+            }
+        for k in traverse_keys(d, [], []):
+            print(k)
+
+        raise ValueError
