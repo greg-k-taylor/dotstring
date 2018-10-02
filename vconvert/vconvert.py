@@ -20,7 +20,7 @@ def last_element(d, key_list):
         except TypeError:
             return # not sub-scriptable
         if isinstance(t, dict):                
-            yield from last_element(d[k], key_list)
+            yield from last_element(t, key_list)
         elif isinstance(t, list):
             for l in t:
                 yield from last_element(l, key_list.copy())
@@ -94,3 +94,19 @@ def int_convert(d, include_keys=[], exclude_keys=[]):
 
 def float_convert(d, include_keys=[], exclude_keys=[]):
     return value_convert(d, to_float, include_keys, exclude_keys)
+
+def unlist(d, include_keys=[], exclude_keys=[]):
+    def unlist_helper(d, include_keys=[], exclude_keys=[], keys=[]):
+        if isinstance(d, dict):
+            for key, val in d.items():
+                if isinstance(val, list):
+                    if len(val) == 1:
+                        path = '.'.join(keys + [key])
+                        if include_keys and path in include_keys:
+                            d[key] = val[0]
+                        elif path not in exclude_keys:
+                            d[key] = val[0]
+                elif isinstance(val, dict):
+                    unlist_helper(val, include_keys, exclude_keys, keys + [key])
+    unlist_helper(d, include_keys, exclude_keys, [])
+    return d
