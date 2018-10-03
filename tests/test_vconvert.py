@@ -2,12 +2,12 @@ from copy import deepcopy
 import unittest
 from vconvert import value_convert
 from vconvert import int_convert
+from vconvert import unlist
 # private methods
 from vconvert.vconvert import key_value
 from vconvert.vconvert import set_key_value
 from vconvert.vconvert import last_element
 from vconvert.vconvert import traverse_keys
-from vconvert.vconvert import unlist
 
 
 class TestDrugbankUtils(unittest.TestCase):
@@ -131,6 +131,13 @@ class TestDrugbankUtils(unittest.TestCase):
                            "drugbank.pharmacology.xref.wikipedia"])
 
     def test_unlist(self):
+        # test simple document
+        d = {
+            'lst': ['123']
+            }
+        res = unlist(d, [], [])
+        self.assertEquals(res['lst'], '123')
+
         # test nested document
         input = {
             'drugbank': {
