@@ -57,6 +57,15 @@ def set_key_value(dictionary, key, value):
         safe_assign(k, le)
     return dictionary
 
+def remove_key(dictionary, key):
+    """TODO:  remove field specified by key"""
+    if not is_str(key):
+        raise TypeError("key argument must of be of type 'str'")
+    key_list = key.split('.')
+    for k, le in last_element(dictionary, key_list):
+        del le[k]
+    return dictionary
+
 def traverse_keys(d, include_keys=[], exclude_keys=[]):
     """
     # bydefault, traverse all keys

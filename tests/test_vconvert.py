@@ -7,10 +7,28 @@ from vconvert import unlist
 from vconvert.vconvert import key_value
 from vconvert.vconvert import set_key_value
 from vconvert.vconvert import last_element
+from vconvert.vconvert import remove_key
 from vconvert.vconvert import traverse_keys
 
 
-class TestDrugbankUtils(unittest.TestCase):
+class TestMyChemUtils(unittest.TestCase):
+
+    def setUp(self):
+        # test simple document
+        self.simple = {
+            'lst': ['123']
+            }
+        # test nested document
+        self.nested = {
+            'drugbank': {
+                'pharmacology': {
+                    'actions': ['123'],
+                    'xref': {
+                        'wikipedia': 'www.wiki.com'
+                        }
+                    }
+                }
+            }
 
     def test_key_value(self):
 
@@ -163,3 +181,14 @@ class TestDrugbankUtils(unittest.TestCase):
         d = deepcopy(input)
         res = unlist(d, [], ['drugbank.pharmacology.actions'])
         self.assertEquals(res['drugbank']['pharmacology']['actions'], ['123'])
+
+    def test_remove_key(self):
+        # default args
+        d = deepcopy(self.simple)
+        res = remove_key(d, "lst")
+        self.assertEquals(res, {})
+
+        # nested doc
+        d = deepcopy(self.nested)
+        res = remove_key(d, "drugbank.pharmacology.actions")
+        self.assertTrue('actions' not in res['drugbank']['pharmacology'].keys())
