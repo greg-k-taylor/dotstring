@@ -1,17 +1,17 @@
 from copy import deepcopy
 import unittest
-from vconvert import value_convert
-from vconvert import int_convert
-from vconvert import unlist
+from dotstring import value_convert
+from dotstring import int_convert
+from dotstring import unlist
 # private methods
-from vconvert.vconvert import key_value
-from vconvert.vconvert import set_key_value
-from vconvert.vconvert import last_element
-from vconvert.vconvert import remove_key
-from vconvert.vconvert import traverse_keys
+from dotstring.dotstring import key_value
+from dotstring.dotstring import set_key_value
+from dotstring.dotstring import last_element
+from dotstring.dotstring import remove_key
+from dotstring.dotstring import traverse_keys
 
 
-class TestMyChemUtils(unittest.TestCase):
+class TestDotString(unittest.TestCase):
 
     def setUp(self):
         # test simple document

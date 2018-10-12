@@ -1,6 +1,6 @@
-from vconvert.type import is_str
-from vconvert.type import to_float
-from vconvert.type import to_int
+from dotstring.type import is_str
+from dotstring.type import to_float
+from dotstring.type import to_int
 
 
 def last_element(d, key_list):
@@ -58,12 +58,15 @@ def set_key_value(dictionary, key, value):
     return dictionary
 
 def remove_key(dictionary, key):
-    """TODO:  remove field specified by key"""
+    """remove field specified by key"""
     if not is_str(key):
         raise TypeError("key argument must of be of type 'str'")
     key_list = key.split('.')
     for k, le in last_element(dictionary, key_list):
-        del le[k]
+        try:
+            del le[k]
+        except KeyError:
+            pass
     return dictionary
 
 def traverse_keys(d, include_keys=[], exclude_keys=[]):
