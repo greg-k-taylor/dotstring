@@ -16,11 +16,15 @@ class TestDotString(unittest.TestCase):
     def setUp(self):
         # test simple document
         self.simple = {
+            'field': 'value'
+            }
+        # test simple list document
+        self.simple_lst = {
             'lst': ['123']
             }
         # test nested document
         self.nested = {
-            'drugbank': {
+            'drugdb': {
                 'pharmacology': {
                     'actions': ['123'],
                     'xref': {
@@ -33,56 +37,35 @@ class TestDotString(unittest.TestCase):
     def test_key_value(self):
 
         # test small document
-        d = {
-            'field': 'value'
-            }
+        d = deepcopy(self.simple)
         res = key_value(d, 'field')
         self.assertEqual(list(res), ['value'])
 
-        d = {
-            'drugbank': {
-                'pharmacology': {
-                    'actions': '123',
-                    'xref': {
-                        'wikipedia': 'www.wiki.com'
-                        }
-                    }
-                }
-            }
-        res = key_value(d, "drugbank.pharmacology.xref.wikipedia")
+        # test nested document
+        d = deepcopy(self.nested)
+        res = key_value(d, "drugdb.pharmacology.xref.wikipedia")
         self.assertEqual(list(res), ["www.wiki.com"])
 
-        res = key_value(d, "drugbank.udef_field.xref")
+        res = key_value(d, "drugdb.udef_field.xref")
         self.assertEqual(list(res), [])
         
     def test_set_key_value(self):
 
         # test small document
-        d = {
-            'field': 'value'
-            }
+        d = deepcopy(self.simple)
         res = set_key_value(d, 'field', 'new-value')
         self.assertEqual(res['field'], 'new-value')
 
         # test nested document
-        d = {
-            'drugbank': {
-                'pharmacology': {
-                    'actions': '123',
-                    'xref': {
-                        'wikipedia': 'www.wiki.com'
-                        }
-                    }
-                }
-            }
+        d = deepcopy(self.nested)
 
         # test where field is present
-        res = set_key_value(d, "drugbank.pharmacology.xref.wikipedia", "www.myurl.com")
-        self.assertEqual(res['drugbank']['pharmacology']['xref']['wikipedia'], "www.myurl.com")
+        res = set_key_value(d, "drugdb.pharmacology.xref.wikipedia", "www.myurl.com")
+        self.assertEqual(res['drugdb']['pharmacology']['xref']['wikipedia'], "www.myurl.com")
 
         # test where field is not present
-        res = set_key_value(d, "drugbank.pharmacology.xref-invalid.wikipedia", "www.wiki.com")
-        self.assertEqual(res['drugbank']['pharmacology']['xref']['wikipedia'], "www.myurl.com")
+        res = set_key_value(d, "drugdb.pharmacology.xref-invalid.wikipedia", "www.wiki.com")
+        self.assertEqual(res['drugdb']['pharmacology']['xref']['wikipedia'], "www.myurl.com")
 
         # test invalid input cases
         with self.assertRaises(TypeError):
@@ -90,7 +73,7 @@ class TestDotString(unittest.TestCase):
 
     def test_last_element(self):
         d = {
-            'drugbank': {
+            'drugdb': {
                 'measurement': [
                     {'pH': '6'},
                     {'pH': '7.5'},
@@ -98,7 +81,7 @@ class TestDotString(unittest.TestCase):
                     ]
                 }
             }
-        key_list = ["drugbank", "measurement", "pH"]
+        key_list = ["drugdb", "measurement", "pH"]
         res = []
         for k, le in last_element(d, key_list):
             res.append(le[k])
@@ -106,18 +89,18 @@ class TestDotString(unittest.TestCase):
 
     def test_value_convert(self):
         d = {
-            'drugbank': {'id': '123'},
+            'drugdb': {'id': '123'},
             'pharmgkb': {'id': '456'},
             'chebi': {'id': '789'},
             'other': {'id': '9'}
             }
         res = int_convert(d,
                           include_keys=[
-                                "drugbank.id",
+                                "drugdb.id",
                                 "pharmgkb.id",
                                 "chebi.id"
                                 ])
-        r = key_value(d, "drugbank.id")
+        r = key_value(d, "drugdb.id")
         self.assertEquals(list(r), [123])
         r = key_value(d, "pharmgkb.id")
         self.assertEquals(list(r), [456])
@@ -131,7 +114,7 @@ class TestDotString(unittest.TestCase):
     def test_traverse_keys(self):
         # test nested document
         d = {
-            'drugbank': {
+            'drugdb': {
                 'pharmacology': {
                     'actions': '123',
                     'xref': {
@@ -145,50 +128,37 @@ class TestDotString(unittest.TestCase):
             res.append(k)
 
         self.assertEquals(res,
-                          ["drugbank.pharmacology.actions",
-                           "drugbank.pharmacology.xref.wikipedia"])
+                          ["drugdb.pharmacology.actions",
+                           "drugdb.pharmacology.xref.wikipedia"])
 
     def test_unlist(self):
         # test simple document
-        d = {
-            'lst': ['123']
-            }
+        d = deepcopy(self.simple_lst)
         res = unlist(d, [], [])
         self.assertEquals(res['lst'], '123')
 
-        # test nested document
-        input = {
-            'drugbank': {
-                'pharmacology': {
-                    'actions': ['123'],
-                    'xref': {
-                        'wikipedia': 'www.wiki.com'
-                        }
-                    }
-                }
-            }
         # default args
-        d = deepcopy(input)
+        d = deepcopy(self.nested)
         res = unlist(d, [], [])
-        self.assertEquals(res['drugbank']['pharmacology']['actions'], '123')
+        self.assertEquals(res['drugdb']['pharmacology']['actions'], '123')
 
         # include_keys
-        d = deepcopy(input)
-        res = unlist(d, ['drugbank.pharmacology.actions'], [])
-        self.assertEquals(res['drugbank']['pharmacology']['actions'], '123')
+        d = deepcopy(self.nested)
+        res = unlist(d, ['drugdb.pharmacology.actions'], [])
+        self.assertEquals(res['drugdb']['pharmacology']['actions'], '123')
 
         # exclude_keys
-        d = deepcopy(input)
-        res = unlist(d, [], ['drugbank.pharmacology.actions'])
-        self.assertEquals(res['drugbank']['pharmacology']['actions'], ['123'])
+        d = deepcopy(self.nested)
+        res = unlist(d, [], ['drugdb.pharmacology.actions'])
+        self.assertEquals(res['drugdb']['pharmacology']['actions'], ['123'])
 
     def test_remove_key(self):
         # default args
-        d = deepcopy(self.simple)
+        d = deepcopy(self.simple_lst)
         res = remove_key(d, "lst")
         self.assertEquals(res, {})
 
         # nested doc
         d = deepcopy(self.nested)
-        res = remove_key(d, "drugbank.pharmacology.actions")
-        self.assertTrue('actions' not in res['drugbank']['pharmacology'].keys())
+        res = remove_key(d, "drugdb.pharmacology.actions")
+        self.assertTrue('actions' not in res['drugdb']['pharmacology'].keys())
