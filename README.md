@@ -5,11 +5,12 @@ Consider the following python nested object:
 ```python
 self.nested = {
     'drugdb': {
-    'pharmacology': {
-        'id_lst': ['123'],
-        'actions': 'cure'
-        'xref': {
-            'wikipedia': 'www.wiki.com'
+        'pharmacology': {
+            'id_lst': ['123'],
+            'actions': 'cure'
+            'xref': {
+                'wikipedia': 'www.wiki.com'
+            }
         }
     }
 }
