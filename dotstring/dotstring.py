@@ -195,8 +195,9 @@ def unlist(d, include_keys=[], exclude_keys=[]):
                 if isinstance(val, list):
                     if len(val) == 1:
                         path = '.'.join(keys + [key])
-                        if include_keys and path in include_keys:
-                            d[key] = val[0]
+                        if include_keys:
+                            if path in include_keys:
+                                d[key] = val[0]
                         elif path not in exclude_keys:
                             d[key] = val[0]
                 elif isinstance(val, dict):
